@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router"
+import { useLocation, useNavigate } from "react-router"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import PasswordInput from "@/components/custom/PasswordInput";
 import { useRegisterMutation } from "@/redux/features/auth/auth.api"
 import { toast } from "sonner"
 import { FaGoogle } from "react-icons/fa";
+import { envVariables } from "@/config"
 
 const registerFormSchema = z.object({
     name: z
@@ -69,6 +70,7 @@ export function RegisterForm({
 
     const [register] = useRegisterMutation();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const form = useForm<z.infer<typeof registerFormSchema>>({
         resolver: zodResolver(registerFormSchema),
@@ -218,9 +220,16 @@ export function RegisterForm({
                     </form>
                 </Form>
                 <div className="flex justify-center -mt-3">
-                    <Button variant="outline" className="min-w-xs rounded-full py-6 cursor-pointer">
-                        <FaGoogle /> Login with Google
-                    </Button>
+                    <a
+                        href={`${envVariables.baseURL}/auth/google?redirect=${location.state || "/"}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <Button variant="outline" className="min-w-xs rounded-full py-6 cursor-pointer">
+
+                            <FaGoogle /> Register with Google
+                        </Button>
+                    </a>
                 </div>
             </div>
         </div>

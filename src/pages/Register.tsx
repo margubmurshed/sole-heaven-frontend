@@ -1,9 +1,18 @@
 import Logo from "@/assets/icons/Logo"
-import { Link } from "react-router"
+import { Link, Navigate } from "react-router"
 import bg from "@/assets/images/register_background_image.jpg";
 import { RegisterForm } from "@/components/modules/Authentication/RegisterForm";
+import { useUserQuery } from "@/redux/features/auth/auth.api";
+import FullPageLoader from "@/components/custom/FullPageLoader";
 
 export default function RegisterPage() {
+    const { data, isFetching } = useUserQuery();
+
+    if (isFetching) {
+        return <FullPageLoader />
+    }
+
+    if (data?.data.email) return <Navigate to="/" />
     return (
         <div className="grid min-h-screen lg:grid-cols-2 bg-gradient-to-br from-white from-30% to-accent/50">
             <div className="flex flex-col justify-between gap-4 p-5 md:pt-10">
