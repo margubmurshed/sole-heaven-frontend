@@ -13,9 +13,9 @@ export const router = createBrowserRouter([
             { index: true, Component: Landing },
             { path: "about", Component: About },
             { path: "shop", Component: Shop },
-            { path: "verify", Component: Verify }
         ]
     },
     { path: "/login", Component: Login },
     { path: "/register", Component: Register },
+    { path: "verify", Component: Verify }
 ])
