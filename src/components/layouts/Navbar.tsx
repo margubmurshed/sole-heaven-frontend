@@ -24,8 +24,11 @@ import {
 } from "@/components/ui/sheet";
 import { Link } from "react-router";
 import Logo from "@/assets/icons/Logo";
-import { useUserQuery } from "@/redux/features/auth/auth.api";
+import { authApi, useLogoutMutation, useUserQuery } from "@/redux/features/auth/auth.api";
 import ButtonLoader from "../custom/ButtonLoader";
+import { userRoles } from "@/constatnts/role";
+import { Skeleton } from "../ui/skeleton";
+import { useAppDispatch } from "@/redux/hooks";
 
 interface MenuItem {
     title: string;
@@ -52,7 +55,24 @@ interface NavbarProps {
 }
 
 const Navbar = ({
-    menu = [
+    auth = {
+        login: { title: "Login", url: "/login" },
+    },
+}: NavbarProps) => {
+    const { data, isLoading } = useUserQuery();
+    const [logout, { isLoading: logoutLoading }] = useLogoutMutation();
+    const dispatch = useAppDispatch();
+
+    const handleLogout = async () => {
+        try {
+            await logout(undefined).unwrap();
+            dispatch(authApi.util.resetApiState());
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
+    }
+
+    const menu = [
         { title: "Home", url: "/" },
         { title: "Shop", url: "/shop" },
         { title: "About", url: "/about" },
@@ -60,13 +80,15 @@ const Navbar = ({
         { title: "Reviews", url: "/reviews" },
         { title: "FAQ", url: "/faq" },
         { title: "Contact", url: "/contact" },
-    ],
-    auth = {
-        login: { title: "Login", url: "/login" },
-    },
-}: NavbarProps) => {
-    const { data, isLoading } = useUserQuery();
-    console.log(data?.data.email)
+    ]
+
+    if (data?.data.email) {
+        if (data.data.role === userRoles.ADMIN || data.data.role === userRoles.SUPER_ADMIN) {
+            menu.push({ title: "Dashboard", url: "/admin" })
+        } else {
+            menu.push({ title: "Dashboard", url: "/user" })
+        }
+    }
     return (
         <section className="py-4 border-b">
             <div className="container mx-auto">
@@ -81,6 +103,14 @@ const Navbar = ({
                             <NavigationMenu>
                                 <NavigationMenuList>
                                     {menu.map((item) => renderMenuItem(item))}
+                                    {isLoading && Array.from({ length: 2 }).map((_, i) => (
+                                        <div key={i} className="flex items-center gap-2">
+                                            {/* icon placeholder */}
+                                            <Skeleton className="h-4 w-4 rounded bg-gray-200" />
+                                            {/* text placeholder */}
+                                            <Skeleton className="h-4 w-16 rounded bg-gray-200" />
+                                        </div>
+                                    ))}
                                 </NavigationMenuList>
                             </NavigationMenu>
                         </div>
@@ -91,7 +121,7 @@ const Navbar = ({
                                 <ButtonLoader />
                             </Button>)
                             : data?.data.email
-                                ? (<Button variant="destructive" size="sm">
+                                ? (<Button variant="destructive" size="sm" onClick={handleLogout} disabled={logoutLoading}>
                                     Sign Out
                                 </Button>)
                                 : (<Button asChild variant="outline" size="sm">
@@ -132,9 +162,18 @@ const Navbar = ({
                                     </Accordion>
 
                                     <div className="flex flex-col gap-3">
-                                        <Button asChild variant="outline">
-                                            <Link to={auth.login.url}>{auth.login.title}</Link>
-                                        </Button>
+                                        {isLoading ?
+                                            (<Button variant="outline">
+                                                <ButtonLoader />
+                                            </Button>)
+                                            : data?.data.email
+                                                ? (<Button variant="destructive" onClick={handleLogout} disabled={logoutLoading}>
+                                                    Sign Out
+                                                </Button>)
+                                                : (<Button asChild variant="outline">
+                                                    <Link to={auth.login.url}>{auth.login.title}</Link>
+                                                </Button>)
+                                        }
                                     </div>
                                 </div>
                             </SheetContent>
