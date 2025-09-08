@@ -1,13 +1,22 @@
-import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react"
+import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
+import { useFileUpload, type FileMetadata } from "@/hooks/use-file-upload";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
-import { useFileUpload, type FileMetadata } from "@/hooks/use-file-upload"
-import { Button } from "@/components/ui/button"
-import { useEffect } from "react"
+interface MultipleFileUploaderProps {
+  onChange: (files: (File | FileMetadata)[]) => void;
+  initialUrls?: string[]; // cloud images URLs
+  onDeleteUrl?: (url: string) => void;
+}
 
-export default function MultipleFileUploader({onChange}: { onChange: (files: (File | FileMetadata)[] | []) => void }) {
-  const maxSizeMB = 5
-  const maxSize = maxSizeMB * 1024 * 1024 // 5MB default
-  const maxFiles = 6
+export default function MultipleFileUploader({
+  onChange,
+  initialUrls = [],
+  onDeleteUrl,
+}: MultipleFileUploaderProps) {
+  const maxSizeMB = 5;
+  const maxSize = maxSizeMB * 1024 * 1024;
+  const maxFiles = 6;
 
   const [
     { files, isDragging, errors },
@@ -24,16 +33,21 @@ export default function MultipleFileUploader({onChange}: { onChange: (files: (Fi
     accept: "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif",
     maxSize,
     multiple: true,
-    maxFiles
-  })
+    maxFiles,
+  });
 
+  // Track cloud images separately
+  const [cloudImages, setCloudImages] = useState<string[]>(initialUrls);
+
+  // Whenever local files change, notify parent
   useEffect(() => {
-    if(files.length > 0) {
-      onChange(files.map((file) => file.file as File))
-    } else {
-      onChange([])
-    }
-  }, [files, onChange])
+    onChange(files.map((f) => f.file));
+  }, [files, onChange]);
+
+  const handleRemoveCloudImage = (url: string) => {
+    setCloudImages((prev) => prev.filter((img) => img !== url));
+    onDeleteUrl?.(url);
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -44,46 +58,49 @@ export default function MultipleFileUploader({onChange}: { onChange: (files: (Fi
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
-        data-files={files.length > 0 || undefined}
         className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
       >
-        <input
-          {...getInputProps()}
-          className="sr-only"
-          aria-label="Upload image file"
-        />
-        {files.length > 0 ? (
+        <input {...getInputProps()} className="sr-only" aria-label="Upload image file" />
+
+        {(files.length > 0 || cloudImages.length > 0) ? (
           <div className="flex w-full flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="truncate text-sm font-medium">
-                Uploaded Files ({files.length})
+                Uploaded Files ({files.length + cloudImages.length})
               </h3>
               <Button
                 variant="outline"
                 size="sm"
                 type="button"
                 onClick={openFileDialog}
-                disabled={files.length >= maxFiles}
+                disabled={files.length + cloudImages.length >= maxFiles}
               >
-                <UploadIcon
-                  className="-ms-0.5 size-3.5 opacity-60"
-                  aria-hidden="true"
-                />
+                <UploadIcon className="-ms-0.5 size-3.5 opacity-60" aria-hidden="true" />
                 Add more
               </Button>
             </div>
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              {/* Render cloud images first */}
+              {cloudImages.map((url) => (
+                <div key={url} className="bg-accent relative aspect-square rounded-md">
+                  <img src={url} alt="Cloud image" className="size-full rounded-[inherit] object-cover" />
+                  <Button
+                    onClick={() => handleRemoveCloudImage(url)}
+                    size="icon"
+                    type="button"
+                    className="border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none"
+                    aria-label="Remove cloud image"
+                  >
+                    <XIcon className="size-3.5" />
+                  </Button>
+                </div>
+              ))}
+
+              {/* Render local files */}
               {files.map((file) => (
-                <div
-                  key={file.id}
-                  className="bg-accent relative aspect-square rounded-md"
-                >
-                  <img
-                    src={file.preview}
-                    alt={file.file.name}
-                    className="size-full rounded-[inherit] object-cover"
-                  />
+                <div key={file.id} className="bg-accent relative aspect-square rounded-md">
+                  <img src={file.preview} alt={file.file.name} className="size-full rounded-[inherit] object-cover" />
                   <Button
                     onClick={() => removeFile(file.id)}
                     size="icon"
@@ -118,14 +135,11 @@ export default function MultipleFileUploader({onChange}: { onChange: (files: (Fi
       </div>
 
       {errors.length > 0 && (
-        <div
-          className="text-destructive flex items-center gap-1 text-xs"
-          role="alert"
-        >
+        <div className="text-destructive flex items-center gap-1 text-xs" role="alert">
           <AlertCircleIcon className="size-3 shrink-0" />
           <span>{errors[0]}</span>
         </div>
       )}
     </div>
-  )
+  );
 }

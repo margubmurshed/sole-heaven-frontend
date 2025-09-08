@@ -75,10 +75,8 @@ const Navbar = ({
     const menu = [
         { title: "Home", url: "/" },
         { title: "Shop", url: "/shop" },
+        { title: "Cart", url: "/cart" },
         { title: "About", url: "/about" },
-        { title: "Features", url: "/features" },
-        { title: "Reviews", url: "/reviews" },
-        { title: "FAQ", url: "/faq" },
         { title: "Contact", url: "/contact" },
     ]
 
