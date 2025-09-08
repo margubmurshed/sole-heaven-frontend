@@ -14,6 +14,9 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { adminSidebarItems } from "./adminSidebarItems";
 import { userSidebarItems } from "./userSidebarItems";
 import Unauthorized from "@/pages/Unauthorized";
+import ProductDetails from "@/pages/ProductDetails";
+import Cart from "@/pages/Cart";
+import Checkout from "@/pages/Checkout";
 
 export const router = createBrowserRouter([
     {
@@ -21,6 +24,9 @@ export const router = createBrowserRouter([
             { index: true, Component: Landing },
             { path: "about", Component: About },
             { path: "shop", Component: Shop },
+            { path: "cart", Component: Cart },
+            { path: "checkout", Component: Checkout },
+            { path: "product/:slug", Component: ProductDetails },
         ]
     },
     {
