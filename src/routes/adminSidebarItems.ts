@@ -1,11 +1,10 @@
 import type { ISidebarItem } from "@/types";
-// import { generateRoutes } from "@/utils/generateRoutes";
 import { lazy } from "react";
 
 const Analytics = lazy(() => import("@/pages/Admin/Analytics"));
-// const Tours = lazy(() => import("@/pages/Admin/Tours"));
-// const TourTypes = lazy(() => import("@/pages/Admin/TourTypes"));
-// const Divisions = lazy(() => import("@/pages/Admin/Divisions"));
+const Products = lazy(() => import("@/pages/Admin/Products"));
+const Orders = lazy(() => import("@/pages/Admin/Orders"));
+const Categories = lazy(() => import("@/pages/Admin/Categories"));
 
 const makeAdminRoute = (route: string) => `/admin/${route}`;
 
@@ -18,6 +17,21 @@ export const adminSidebarItems: ISidebarItem[] = [
                 title: "Analytics",
                 url: makeAdminRoute("analytics"),
                 component: Analytics
+            },
+            {
+                title: "Products",
+                url: makeAdminRoute("products"),
+                component: Products
+            },
+            {
+                title: "Orders",
+                url: makeAdminRoute("orders"),
+                component: Orders
+            },
+            {
+                title: "Categories",
+                url: makeAdminRoute("categories"),
+                component: Categories
             },
         ],
     },
