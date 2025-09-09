@@ -14,40 +14,7 @@ import SSLCOMMERZ from "@/assets/icons/SSLCOMMERZ.svg";
 import RadioSelect from "@/components/custom/RadioSelect";
 import { Truck } from "lucide-react";
 import { clearCart } from "@/redux/features/cart/cart.slice";
-
-
-const PAYMENT_METHODS = ["COD", "SSLCOMMERZ"] as const;
-
-const BDPhoneNumberSchema = z
-    .string({ error: "Phone Number must be string" })
-    .regex(/^(?:\+8801\d{9}|01\d{9})$/, {
-        message: "Phone number must be valid for Bangladesh. Format: +8801XXXXXXXXX or 01XXXXXXXXX",
-    })
-
-// Billing address schema
-const billingAddressSchema = z.object({
-    name: z.string().nonempty("Name is required"),
-    phone: BDPhoneNumberSchema.nonempty("Phone is required"),
-    address: z.string().nonempty("Address is required"),
-    city: z.string().nonempty("City is required"),
-    district: z.string().nonempty("District is required"),
-    postalCode: z.string().optional(),
-});
-
-const orderProductSchema = z.object({
-    product: z.string().nonempty("Name is required"),
-    quantity: z.number().int().positive("Quantity must be positive"),
-    size: z.number().positive("Quantity must be positive")
-});
-
-// Create Order Schema
-const createOrderSchema = z.object({
-    products: z.array(orderProductSchema).min(1, "At least one product is required"),
-    shippingCost: z.number().nonnegative("Total amount must be non-negative"),
-    paymentMethod: z.enum(PAYMENT_METHODS),
-    billingAddress: billingAddressSchema,
-});
-
+import { createOrderSchema } from "@/validations/order.validation";
 
 export default function Checkout() {
     const cartItems = useAppSelector((state: RootState) => state.cart.items);

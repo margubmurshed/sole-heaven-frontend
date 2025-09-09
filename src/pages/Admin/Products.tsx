@@ -66,7 +66,7 @@ const Products = () => {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                <TableLoader />
+                <TableLoader columns={7} />
               ) : (
                 data?.data.map((product) => (
                   <TableRow key={product._id}>

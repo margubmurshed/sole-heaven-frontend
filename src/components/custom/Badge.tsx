@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils"
+export type VARIANT = "default" | "success" | "destructive" | "secondary";
 
 interface BadgeProps {
   children: React.ReactNode
-  variant?: "default" | "success" | "destructive" | "secondary"
+  variant?: VARIANT
   className?: string
 }
 

@@ -51,7 +51,7 @@ export function CreateCategoryModal({ isLoading }: { isLoading: boolean }) {
         if (featuredImage) {
             formData.append("featuredImage", featuredImage as File);
         }
-        
+
         try {
             await createCategory(formData).unwrap();
             toast.success("Tour type added successfully!");
@@ -72,7 +72,7 @@ export function CreateCategoryModal({ isLoading }: { isLoading: boolean }) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Add Tour Type</DialogTitle>
+                    <DialogTitle>Add Category</DialogTitle>
                     <DialogDescription>
                         Click Add when you&apos;re done.
                     </DialogDescription>
