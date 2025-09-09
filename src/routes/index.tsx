@@ -20,14 +20,20 @@ import Checkout from "@/pages/Checkout";
 import PaymentSuccessPage from "@/pages/Payment/Success";
 import PaymentFailPage from "@/pages/Payment/Fail";
 import PaymentCancelPage from "@/pages/Payment/Cancel";
+import Contact from "@/pages/Contact";
+import Terms from "@/pages/Terms";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
 export const router = createBrowserRouter([
     {
         path: "/", Component: PrimaryLayout, children: [
             { index: true, Component: Landing },
             { path: "about", Component: About },
+            { path: "contact", Component: Contact },
             { path: "shop", Component: Shop },
             { path: "cart", Component: Cart },
+            { path: "terms-and-conditions", Component: Terms },
+            { path: "privacy-policy", Component: PrivacyPolicy },
             { path: "checkout", Component: withAuth(Checkout) },
             { path: "product/:slug", Component: ProductDetails },
         ]
