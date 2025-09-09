@@ -39,10 +39,16 @@ export default function MultipleFileUploader({
   // Track cloud images separately
   const [cloudImages, setCloudImages] = useState<string[]>(initialUrls);
 
-  // Whenever local files change, notify parent
   useEffect(() => {
-    onChange(files.map((f) => f.file));
-  }, [files, onChange]);
+    // Combine local files + cloud images
+    const allFiles = [
+      ...files.map((f) => f.file),
+      ...cloudImages.map((url) => ({ url } as FileMetadata)),
+    ];
+
+    onChange(allFiles);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files, cloudImages]);
 
   const handleRemoveCloudImage = (url: string) => {
     setCloudImages((prev) => prev.filter((img) => img !== url));

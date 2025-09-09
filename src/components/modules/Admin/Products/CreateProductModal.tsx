@@ -23,7 +23,7 @@ import { useCreateProductMutation } from "@/redux/features/products/product.api"
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Tag } from "emblor";
 import { PlusSquare } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -65,16 +65,9 @@ export function CreateProductModal({ isLoading }: { isLoading: boolean }) {
             stock: 0,
             category: "",
         },
-        mode: "onTouched"
     });
 
-    useEffect(() => {
-        console.log(form.formState.errors);
-    }, [form.formState.errors]);
-
     const onSubmit = async (data: ProductFormValues) => {
-
-        console.log(data)
         const productData = {
             ...data,
             sizes: sizes.map((tag) => Number(tag.text)),
@@ -89,7 +82,7 @@ export function CreateProductModal({ isLoading }: { isLoading: boolean }) {
 
         if (sizeChartImage) {
             formData.append("sizeChartImage", sizeChartImage as File);
-        } else return toast.error("Please upload a size chart image.");
+        }
 
         if (images.length > 0) {
             images.forEach((image) => {
@@ -122,7 +115,7 @@ export function CreateProductModal({ isLoading }: { isLoading: boolean }) {
                     <PlusSquare /> Add Product
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[calc(100vh-40px)] overflow-y-auto">
+            <DialogContent className="lg:min-w-[1000px] max-h-[calc(100vh-40px)] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Add Product</DialogTitle>
                     <DialogDescription>Click Add when you&apos;re done.</DialogDescription>
@@ -144,14 +137,15 @@ export function CreateProductModal({ isLoading }: { isLoading: boolean }) {
                                         </FormItem>
                                     )}
                                 />
+
                                 <FormField
                                     control={form.control}
-                                    name="brand"
+                                    name="shortDescription"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Brand</FormLabel>
+                                            <FormLabel>Short Description</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="Enter product brand" {...field} />
+                                                <Textarea placeholder="Enter a short description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -170,104 +164,114 @@ export function CreateProductModal({ isLoading }: { isLoading: boolean }) {
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="shortDescription"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Short Description</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="Enter a short description" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="sku"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>SKU</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Enter product SKU" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="price"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Price</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter product price"
-                                                    {...field}
-                                                    type="number"
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="stock"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Stock</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter available stock"
-                                                    {...field}
-                                                    type="number"
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="category"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Category</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={catLoading}>
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+
+                                    <FormField
+                                        control={form.control}
+                                        name="brand"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Brand</FormLabel>
                                                 <FormControl>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Select a category" />
-                                                    </SelectTrigger>
+                                                    <Input placeholder="Enter product brand" {...field} />
                                                 </FormControl>
-                                                <SelectContent>
-                                                    {categories?.data.map((cat) => (
-                                                        <SelectItem key={cat._id} value={cat._id}>
-                                                            {cat.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="price"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Price</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter product price"
+                                                        {...field}
+                                                        type="number"
+                                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="stock"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Stock</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter available stock"
+                                                        {...field}
+                                                        type="number"
+                                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                                    <FormField
+                                        control={form.control}
+                                        name="sku"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>SKU</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Enter product SKU" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="category"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Category</FormLabel>
+                                                <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={catLoading}>
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select a category" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {categories?.data.map((cat) => (
+                                                            <SelectItem key={cat._id} value={cat._id}>
+                                                                {cat.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
 
                                 <TagInput tags={sizes} setTags={setSizes} label="Sizes" />
 
-                                <div>
-                                    <FormLabel className="mb-3">Featured Image</FormLabel>
-                                    <SingleFileUploader onChange={setFeaturedImage} />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <FormLabel className="mb-3">Featured Image</FormLabel>
+                                        <SingleFileUploader onChange={(file) => setFeaturedImage(file)} />
+                                    </div>
+
+                                    <div>
+                                        <FormLabel className="mb-3">Size Chart Image</FormLabel>
+                                        <SingleFileUploader onChange={(file) => setSizeChartImage(file)}/>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <FormLabel className="mb-3">Size Chart Image</FormLabel>
-                                    <SingleFileUploader onChange={setSizeChartImage} />
-                                </div>
 
                                 <div>
                                     <FormLabel className="mb-3">Product Images</FormLabel>

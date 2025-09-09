@@ -1,7 +1,7 @@
 import { DeleteConfirmModal } from "@/components/custom/DeleteConfirmModal";
 import TableLoader from "@/components/custom/TableLoader";
 import { CreateCategoryModal } from "@/components/modules/Admin/Categories/CreateCategoryModal";
-import { UpdateCategoryModal } from "@/components/modules/Admin/Categories/UpdateUserModal";
+import { UpdateCategoryModal } from "@/components/modules/Admin/Categories/UpdateCategoryModal";
 import { Button } from "@/components/ui/button";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";

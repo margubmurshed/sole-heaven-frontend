@@ -1,4 +1,5 @@
 import ButtonLoader from "@/components/custom/ButtonLoader";
+import MultipleFileUploader from "@/components/custom/MultipleFileUploader";
 // import MultipleFileUploader from "@/components/custom/MultipleFileUploader";
 import SingleFileUploader from "@/components/custom/SingleFileUploader";
 import TagInput from "@/components/custom/TagInput";
@@ -38,7 +39,6 @@ const updateProductZodSchema = z.object({
         .string(),
     price: z.number().nonnegative("Price must be a positive number"),
     sku: z.string().nonempty("SKU is required").transform((val) => val.toUpperCase()),
-    sizes: z.array(z.number().positive("Size must be positive")).nonempty("Sizes required"),
     stock: z.number().nonnegative().optional(),
     category: z.string().nonempty("Category is required").trim(),
 });
@@ -91,6 +91,10 @@ export function UpdateProductModal({
         }
     }, [form, product])
 
+    useEffect(() => {
+        console.log(form.formState.errors);
+    }, [form.formState.errors]);
+
     const onSubmit = async (data: ProductFormValues) => {
         const productData = {
             ...data,
@@ -123,6 +127,7 @@ export function UpdateProductModal({
                 setSizeChartImage(null);
                 setImages([]);
                 setSizes([]);
+                setDeletedImages([])
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
@@ -175,96 +180,145 @@ export function UpdateProductModal({
                                 />
                                 <FormField
                                     control={form.control}
-                                    name="price"
+                                    name="shortDescription"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Price</FormLabel>
+                                            <FormLabel>Short Description</FormLabel>
                                             <FormControl>
-                                                <Input
-                                                    placeholder="Enter product price"
-                                                    {...field}
-                                                    type="number"
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
+                                                <Textarea placeholder="Enter short product description" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="stock"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Stock</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter available stock"
-                                                    {...field}
-                                                    type="number"
-                                                    onChange={(e) => field.onChange(Number(e.target.value))}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="category"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Category</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={catLoading}>
+
+
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+                                    <FormField
+                                        control={form.control}
+                                        name="brand"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Brand</FormLabel>
                                                 <FormControl>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Select a category" />
-                                                    </SelectTrigger>
+                                                    <Input placeholder="Enter brand name" {...field} />
                                                 </FormControl>
-                                                <SelectContent>
-                                                    {categories?.data.map((cat) => (
-                                                        <SelectItem key={cat._id} value={cat._id}>
-                                                            {cat.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="price"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Price</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter product price"
+                                                        {...field}
+                                                        type="number"
+                                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="stock"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Stock</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Enter available stock"
+                                                        {...field}
+                                                        type="number"
+                                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                                <TagInput tags={sizes} setTags={setSizes} label="Sizes" />
-
-                                <div>
-                                    <FormLabel className="mb-3">Featured Image</FormLabel>
-                                    <SingleFileUploader
-                                        initialUrl={product?.featuredImage}
-                                        onChange={(file) => setFeaturedImage(file)}
-                                        onDeleteUrl={(url) => {
-                                            if (url && url.startsWith("https://res.cloudinary.com/")) {
-                                                setDeletedImages((prev) => [...prev, url]);
-                                            }
-                                        }}
+                                    <FormField
+                                        control={form.control}
+                                        name="sku"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>SKU</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Enter unique sku" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="category"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Category</FormLabel>
+                                                <Select onValueChange={field.onChange} value={field.value as string | undefined} disabled={catLoading}>
+                                                    <FormControl>
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select a category" />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {categories?.data.map((cat) => (
+                                                            <SelectItem key={cat._id} value={cat._id}>
+                                                                {cat.name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
                                 </div>
 
-                                <div>
-                                    <FormLabel className="mb-3">Size Chart Image</FormLabel>
-                                    <SingleFileUploader
-                                        initialUrl={product?.sizeChartImage}
-                                        onChange={(file) => setSizeChartImage(file)}
-                                        onDeleteUrl={(url) => {
-                                            if (url && url.startsWith("https://res.cloudinary.com/")) {
-                                                setDeletedImages((prev) => [...prev, url]);
-                                            }
-                                        }}
-                                    />
+                                <TagInput tags={sizes} setTags={setSizes} label="Sizes" />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+
+                                    <div>
+                                        <FormLabel className="mb-3">Featured Image</FormLabel>
+                                        <SingleFileUploader
+                                            initialUrl={product?.featuredImage}
+                                            onChange={(file) => setFeaturedImage(file)}
+                                            onDeleteUrl={(url) => {
+                                                if (url && url.startsWith("https://res.cloudinary.com/")) {
+                                                    setDeletedImages((prev) => [...prev, url]);
+                                                }
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <FormLabel className="mb-3">Size Chart Image</FormLabel>
+                                        <SingleFileUploader
+                                            initialUrl={product?.sizeChartImage}
+                                            onChange={(file) => setSizeChartImage(file)}
+                                            onDeleteUrl={(url) => {
+                                                if (url && url.startsWith("https://res.cloudinary.com/")) {
+                                                    setDeletedImages((prev) => [...prev, url]);
+                                                }
+                                            }}
+                                        />
+                                    </div>
                                 </div>
 
                                 <div>
                                     <FormLabel className="mb-3">Product Images</FormLabel>
-                                    {/* <MultipleFileUploader
+                                    <MultipleFileUploader
                                         initialUrls={product?.images || []}
                                         onChange={(files) => setImages(files)}
                                         onDeleteUrl={(url) => {
@@ -272,7 +326,7 @@ export function UpdateProductModal({
                                                 setDeletedImages((prev) => [...prev, url]);
                                             }
                                         }}
-                                    /> */}
+                                    />
                                 </div>
 
                                 <DialogFooter>

@@ -25,10 +25,11 @@ import {
 import { Link } from "react-router";
 import Logo from "@/assets/icons/Logo";
 import { authApi, useLogoutMutation, useUserQuery } from "@/redux/features/auth/auth.api";
-import ButtonLoader from "../custom/ButtonLoader";
 import { userRoles } from "@/constatnts/role";
 import { Skeleton } from "../ui/skeleton";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { FaCartPlus } from "react-icons/fa";
+import { Badge } from "../custom/Badge";
 
 interface MenuItem {
     title: string;
@@ -62,6 +63,7 @@ const Navbar = ({
     const { data, isLoading } = useUserQuery();
     const [logout, { isLoading: logoutLoading }] = useLogoutMutation();
     const dispatch = useAppDispatch();
+    const cartItemsCount = useAppSelector(state => state.cart.items.length)
 
     const handleLogout = async () => {
         try {
@@ -75,7 +77,6 @@ const Navbar = ({
     const menu = [
         { title: "Home", url: "/" },
         { title: "Shop", url: "/shop" },
-        { title: "Cart", url: "/cart" },
         { title: "About", url: "/about" },
         { title: "Contact", url: "/contact" },
     ]
@@ -113,11 +114,24 @@ const Navbar = ({
                             </NavigationMenu>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
+                        <Link to="/cart">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="relative"
+                                aria-label="Notifications"
+                            >
+                                <FaCartPlus size={16} aria-hidden="true" />
+                                {cartItemsCount > 0 && (
+                                    <Badge variant="secondary" className="absolute -top-2 left-full min-w-5 -translate-x-1/2 px-1">
+                                        {cartItemsCount > 99 ? "99+" : cartItemsCount}
+                                    </Badge>
+                                )}
+                            </Button>
+                        </Link>
                         {isLoading ?
-                            (<Button variant="outline" size="sm">
-                                <ButtonLoader />
-                            </Button>)
+                            (<Skeleton className="h-8 w-18 rounded bg-gray-200" />)
                             : data?.data.email
                                 ? (<Button variant="destructive" size="sm" onClick={handleLogout} disabled={logoutLoading}>
                                     Sign Out
@@ -136,46 +150,63 @@ const Navbar = ({
                         <Link to="/" className="flex items-center gap-2">
                             <Logo className="w-[120px]" />
                         </Link>
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" size="icon" className="rounded-full">
-                                    <Menu className="size-4" />
+                        <div className="flex items-center gap-3">
+                            <Link to="/cart">
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="relative rounded-full"
+                                    aria-label="Notifications"
+                                >
+                                    <FaCartPlus size={16} aria-hidden="true" />
+                                    {cartItemsCount > 0 && (
+                                        <Badge variant="secondary" className="absolute -top-2 left-full min-w-5 -translate-x-1/2 px-1">
+                                            {cartItemsCount > 99 ? "99+" : cartItemsCount}
+                                        </Badge>
+                                    )}
                                 </Button>
-                            </SheetTrigger>
-                            <SheetContent className="overflow-y-auto">
-                                <SheetHeader className="border-b">
-                                    <SheetTitle>
-                                        <Link to="/" className="flex items-center gap-2">
-                                            <Logo className="w-[120px]" />
-                                        </Link>
-                                    </SheetTitle>
-                                </SheetHeader>
-                                <div className="flex flex-col gap-6 p-4">
-                                    <Accordion
-                                        type="single"
-                                        collapsible
-                                        className="flex w-full flex-col gap-4"
-                                    >
-                                        {menu.map((item) => renderMobileMenuItem(item))}
-                                    </Accordion>
+                            </Link>
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button variant="outline" size="icon" className="rounded-full">
+                                        <Menu className="size-4" />
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent className="overflow-y-auto">
+                                    <SheetHeader className="border-b">
+                                        <SheetTitle>
+                                            <Link to="/" className="flex items-center gap-2">
+                                                <Logo className="w-[120px]" />
+                                            </Link>
+                                        </SheetTitle>
+                                    </SheetHeader>
+                                    <div className="flex flex-col gap-6 p-4">
+                                        <Accordion
+                                            type="single"
+                                            collapsible
+                                            className="flex w-full flex-col gap-4"
+                                        >
+                                            {menu.map((item) => renderMobileMenuItem(item))}
+                                        </Accordion>
 
-                                    <div className="flex flex-col gap-3">
-                                        {isLoading ?
-                                            (<Button variant="outline">
-                                                <ButtonLoader />
-                                            </Button>)
-                                            : data?.data.email
-                                                ? (<Button variant="destructive" onClick={handleLogout} disabled={logoutLoading}>
-                                                    Sign Out
+                                        <div className="flex flex-col gap-3">
+                                            {isLoading ?
+                                                (<Button variant="outline">
+                                                    <Skeleton className="h-4 w-4 rounded bg-gray-200" />
                                                 </Button>)
-                                                : (<Button asChild variant="outline">
-                                                    <Link to={auth.login.url}>{auth.login.title}</Link>
-                                                </Button>)
-                                        }
+                                                : data?.data.email
+                                                    ? (<Button variant="destructive" onClick={handleLogout} disabled={logoutLoading}>
+                                                        Sign Out
+                                                    </Button>)
+                                                    : (<Button asChild variant="outline">
+                                                        <Link to={auth.login.url}>{auth.login.title}</Link>
+                                                    </Button>)
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
                     </div>
                 </div>
             </div>

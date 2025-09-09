@@ -1,3 +1,4 @@
+import { Badge } from "@/components/custom/Badge";
 import { DeleteConfirmModal } from "@/components/custom/DeleteConfirmModal";
 import TableLoader from "@/components/custom/TableLoader";
 import { CreateProductModal } from "@/components/modules/Admin/Products/CreateProductModal";
@@ -26,7 +27,7 @@ const Products = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await deleteProduct({_id: id}).unwrap();
+      const response = await deleteProduct({ _id: id }).unwrap();
       if (response.success) {
         toast.success("Product deleted successfully!");
         if (data?.meta) {
@@ -36,7 +37,7 @@ const Products = () => {
         }
         setOpen(false);
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Failed to delete product:", error);
       toast.error(error?.data?.message || "Failed to delete product");
@@ -45,7 +46,7 @@ const Products = () => {
 
   return (
     <div>
-      <div className="w-full p-6 bg-background text-foreground max-w-5xl mx-auto">
+      <div className="w-full p-6 bg-background text-foreground">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold">Products</h1>
           <CreateProductModal isLoading={isLoading} />
@@ -54,9 +55,11 @@ const Products = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">Name</TableHead>
-                <TableHead className="w-[150px]">Price</TableHead>
-                <TableHead className="w-[150px]">Category</TableHead>
+                <TableHead></TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Stock</TableHead>
                 <TableHead>Created At</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -67,9 +70,11 @@ const Products = () => {
               ) : (
                 data?.data.map((product) => (
                   <TableRow key={product._id}>
+                    <TableCell><img src={product.featuredImage} alt={product.name} className="w-20 h-20 object-cover rounded-md border" /></TableCell>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.price}</TableCell>
                     <TableCell>{product.category?.name || "—"}</TableCell>
+                    <TableCell><Badge variant={product.stock ? "success": "destructive"}>{product.stock ? "Stock In" : "Stock Out"}</Badge></TableCell>
                     <TableCell>{new Date(product.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell>
                       <UpdateProductModal product={product} />
@@ -79,7 +84,7 @@ const Products = () => {
                         isLoading={isDeleting}
                         onConfirm={() => handleDelete(product._id)}
                       >
-                        <Button variant="destructive" size="sm" className="ml-2">
+                        <Button variant="destructive" size="sm" className="ml-2" disabled={isDeleting}>
                           <TrashIcon /> Delete
                         </Button>
                       </DeleteConfirmModal>

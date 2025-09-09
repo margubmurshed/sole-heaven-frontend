@@ -1,8 +1,9 @@
 export interface ICategoryResponseData {
     _id: string,
     name: string,
-    description:string,
+    description: string,
     parent: string | null,
+    featuredImage: string | undefined
     createdAt: string,
 }
 

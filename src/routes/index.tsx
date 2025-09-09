@@ -17,6 +17,9 @@ import Unauthorized from "@/pages/Unauthorized";
 import ProductDetails from "@/pages/ProductDetails";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
+import PaymentSuccessPage from "@/pages/Payment/Success";
+import PaymentFailPage from "@/pages/Payment/Fail";
+import PaymentCancelPage from "@/pages/Payment/Cancel";
 
 export const router = createBrowserRouter([
     {
@@ -25,7 +28,7 @@ export const router = createBrowserRouter([
             { path: "about", Component: About },
             { path: "shop", Component: Shop },
             { path: "cart", Component: Cart },
-            { path: "checkout", Component: Checkout },
+            { path: "checkout", Component: withAuth(Checkout) },
             { path: "product/:slug", Component: ProductDetails },
         ]
     },
@@ -48,5 +51,8 @@ export const router = createBrowserRouter([
     { path: "/login", Component: Login },
     { path: "/register", Component: Register },
     { path: "/unauthorized", Component: Unauthorized },
-    { path: "verify", Component: Verify }
+    { path: "verify", Component: Verify },
+    { path: "payment/success", Component: PaymentSuccessPage },
+    { path: "payment/fail", Component: PaymentFailPage },
+    { path: "payment/cancel", Component: PaymentCancelPage },
 ])

@@ -25,6 +25,7 @@ export interface IOrderResponseData {
         postalCode?: string;
     };
     createdAt: Date;
+    paymentURL?: string;
 }
 
 export interface ICreateOrderInfo {

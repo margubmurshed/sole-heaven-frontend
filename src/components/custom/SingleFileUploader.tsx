@@ -41,6 +41,7 @@ export default function SingleFileUploader({
             setPreviewUrl(files[0].preview ?? null);
             onChange(files[0].file);
         } else if (!previewUrl) {
+            setPreviewUrl(null);
             onChange(null);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,13 +52,11 @@ export default function SingleFileUploader({
         if (files.length > 0) {
             removeFile(files[0]?.id);
         } else if (previewUrl && initialUrl) {
-            // removing existing cloudinary image
             onDeleteUrl?.(initialUrl);
             setPreviewUrl(null);
+            onChange(null);
         }
-        onChange(null);
     };
-
     return (
         <div className="flex flex-col gap-2">
             <div className="relative">

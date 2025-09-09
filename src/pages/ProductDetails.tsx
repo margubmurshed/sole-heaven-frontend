@@ -91,17 +91,7 @@ export default function ProductDetails() {
             disabled={!selectedSize}
             onClick={() => {
               if (!selectedSize) return;
-              dispatch(
-                addItem({
-                  productId: product.data._id,
-                  name: product.data.name,
-                  price: product.data.price,
-                  size: selectedSize,
-                  quantity: 1,
-                  featuredImage: product.data.featuredImage,
-                })
-              );
-              navigate("/checkout")
+              navigate(`/checkout?product=${product.data._id}`)
             }
             }
           >

@@ -1,3 +1,4 @@
+import SingleFileUploader from "@/components/custom/SingleFileUploader"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -13,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import type { FileMetadata } from "@/hooks/use-file-upload"
 import { useGetCategoriesQuery, useGetSingleCategoryQuery, useUpdateCategoryMutation } from "@/redux/features/category/category.api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PencilIcon } from "lucide-react"
@@ -32,6 +34,8 @@ export function UpdateCategoryModal({ categoryID }: { categoryID: string }) {
     const [updateCategory, { isLoading: updateCategoryLoading }] = useUpdateCategoryMutation();
     const { data: categories, isLoading: categoriesLoading } = useGetCategoriesQuery({ limit: 100000 })
     const [open, setOpen] = useState(false);
+    const [featuredImage, setFeaturedImage] = useState<File | FileMetadata | null>(null);
+    const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
     const form = useForm({
         resolver: zodResolver(updateCategorySchema),
@@ -53,8 +57,18 @@ export function UpdateCategoryModal({ categoryID }: { categoryID: string }) {
     }, [form, category])
 
     const onSubmit = async (data: z.infer<typeof updateCategorySchema>) => {
+        const formData = new FormData();
+        formData.append("data", JSON.stringify({
+            ...data,
+            deletedImages
+        }));
+
+        if (featuredImage) {
+            formData.append("featuredImage", featuredImage as File);
+        }
+
         try {
-            await updateCategory({ _id: categoryID, ...data }).unwrap();
+            await updateCategory({ _id: categoryID, formData }).unwrap();
             toast.success("Category updated successfully!");
             setOpen(false);
             form.reset();
@@ -66,6 +80,7 @@ export function UpdateCategoryModal({ categoryID }: { categoryID: string }) {
         }
     };
 
+    console.log(category?.data.featuredImage)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -144,6 +159,18 @@ export function UpdateCategoryModal({ categoryID }: { categoryID: string }) {
                                         </FormItem>
                                     )}
                                 />
+                                <div>
+                                    <FormLabel className="mb-3">Featured Image</FormLabel>
+                                    <SingleFileUploader
+                                        initialUrl={category?.data?.featuredImage}
+                                        onChange={(file) => setFeaturedImage(file)}
+                                        onDeleteUrl={(url) => {
+                                            if (url && url.startsWith("https://res.cloudinary.com/")) {
+                                                setDeletedImages((prev) => [...prev, url]);
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 <DialogFooter>
                                     <DialogClose asChild>
                                         <Button variant="outline">Cancel</Button>

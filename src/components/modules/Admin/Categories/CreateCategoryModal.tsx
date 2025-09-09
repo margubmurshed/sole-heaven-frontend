@@ -1,3 +1,4 @@
+import SingleFileUploader from "@/components/custom/SingleFileUploader"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -12,6 +13,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type { FileMetadata } from "@/hooks/use-file-upload"
 import { useCreateCategoryMutation, useGetCategoriesQuery } from "@/redux/features/category/category.api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusSquare } from "lucide-react"
@@ -30,6 +32,7 @@ export function CreateCategoryModal({ isLoading }: { isLoading: boolean }) {
     const [createCategory, { isLoading: createCategoryLoading }] = useCreateCategoryMutation();
     const { data: categories, isLoading: categoriesLoading } = useGetCategoriesQuery({ limit: 100000 })
     const [open, setOpen] = useState(false);
+    const [featuredImage, setFeaturedImage] = useState<File | FileMetadata | null>(null);
 
     const form = useForm({
         resolver: zodResolver(createCategorySchema),
@@ -41,8 +44,16 @@ export function CreateCategoryModal({ isLoading }: { isLoading: boolean }) {
     });
 
     const onSubmit = async (data: z.infer<typeof createCategorySchema>) => {
+
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(data));
+
+        if (featuredImage) {
+            formData.append("featuredImage", featuredImage as File);
+        }
+        
         try {
-            await createCategory(data).unwrap();
+            await createCategory(formData).unwrap();
             toast.success("Tour type added successfully!");
             setOpen(false);
             form.reset();
@@ -130,6 +141,10 @@ export function CreateCategoryModal({ isLoading }: { isLoading: boolean }) {
                                         </FormItem>
                                     )}
                                 />
+                                <div>
+                                    <FormLabel className="mb-3">Featured Image</FormLabel>
+                                    <SingleFileUploader onChange={(file) => setFeaturedImage(file)} />
+                                </div>
                                 <DialogFooter>
                                     <DialogClose asChild>
                                         <Button variant="outline">Cancel</Button>

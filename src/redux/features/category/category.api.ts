@@ -1,11 +1,11 @@
 import { baseApi } from "@/redux/baseApi";
 import type { IAllDataResponse, IResponse,} from "@/types";
-import type { ICategoryResponseData, ICreateCategoryInfo, IUpdateCategoryInfo } from "@/types/category.type";
+import type { ICategoryResponseData, IUpdateCategoryInfo } from "@/types/category.type";
 
 export const categoryApi = baseApi.injectEndpoints({
     endpoints(build) {
         return {
-            createCategory: build.mutation<IResponse<ICategoryResponseData>, ICreateCategoryInfo>({
+            createCategory: build.mutation<IResponse<ICategoryResponseData>, FormData>({
                 query: (userInfo) => ({
                     url: "/product/category/create",
                     method: "POST",
@@ -28,11 +28,11 @@ export const categoryApi = baseApi.injectEndpoints({
                 }),
                 providesTags: ["CATEGORY"]
             }),
-            updateCategory: build.mutation<IResponse<ICategoryResponseData>, IUpdateCategoryInfo>({
+            updateCategory: build.mutation<IResponse<ICategoryResponseData>, {_id:string, formData: FormData}>({
                 query: (categoryInfo) => ({
                     url: `/product/category/${categoryInfo._id}`,
                     method: "PATCH",
-                    data: categoryInfo
+                    data: categoryInfo.formData
                 }),
                 invalidatesTags: ["CATEGORY"]
             }),
