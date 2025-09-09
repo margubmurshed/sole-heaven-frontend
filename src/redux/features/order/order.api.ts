@@ -21,6 +21,14 @@ export const productApi = baseApi.injectEndpoints({
                 }),
                 providesTags: ["ORDER"]
             }),
+            getUserOrders: build.query<IAllDataResponse<IOrderResponseData[]>, unknown>({
+                query: (params) => ({
+                    url: "/order/me",
+                    method: "GET",
+                    params
+                }),
+                providesTags: ["ORDER"]
+            }),
             getSingleOrder: build.query<IResponse<IOrderResponseData>, IUpdateOrderInfo>({
                 query: (orderInfo) => ({
                     url: `/order/${orderInfo._id}`,
@@ -53,5 +61,6 @@ export const {
     useUpdateOrderMutation,
     useGetOrdersQuery,
     useDeleteOrderMutation,
-    useGetSingleOrderQuery
+    useGetSingleOrderQuery,
+    useGetUserOrdersQuery
 } = productApi;

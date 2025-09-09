@@ -1,22 +1,26 @@
-// import UserProfile from "@/pages/User/Profile";
 import type { ISidebarItem } from "@/types";
-// import { generateRoutes } from "@/utils/generateRoutes";
-// import { lazy } from "react";
+import { lazy } from "react";
 
-// const Bookings = lazy(() => import("@/pages/User/Bookings"));
+const Orders = lazy(() => import("@/pages/User/Orders"));
+const Profile = lazy(() => import("@/pages/User/Profile"));
 
-// const makeUserRoute = (route: string) => `/user/${route}`;
+const makeUserRoute = (route: string) => `/user/${route}`;
 
 export const userSidebarItems: ISidebarItem[] = [
     {
         title: "Dashboard",
         url: "#",
         items: [
-            // {
-            //     title: "Bookings",
-            //     url: makeUserRoute("bookings"),
-            //     component: Bookings
-            // },
+            {
+                title: "Orders",
+                url: makeUserRoute("orders"),
+                component: Orders
+            },
+            {
+                title: "Profile",
+                url: makeUserRoute("profile"),
+                component: Profile
+            },
         ],
     }
 ]

@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
         path: "/user",
         Component: withAuth(DashboardLayout, [userRoles.USER as TRole]),
         children: [
-            { index: true, element: <Navigate to="/user/bookings" replace /> },
+            { index: true, element: <Navigate to="/user/orders" replace /> },
             ...generateRoutes(userSidebarItems)
         ]
     },
