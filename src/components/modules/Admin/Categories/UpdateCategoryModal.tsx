@@ -80,7 +80,6 @@ export function UpdateCategoryModal({ categoryID }: { categoryID: string }) {
         }
     };
 
-    console.log(category?.data.featuredImage)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

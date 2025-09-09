@@ -67,7 +67,6 @@ export function UpdateOrderModal({ orderID }: { orderID: string }) {
         }
     };
 
-    console.log(order)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

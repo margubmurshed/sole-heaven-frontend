@@ -27,7 +27,6 @@ const Orders = () => {
         if (status === ORDER_STATUS.SHIPPED) return "secondary";
         return "default"
     }
-
     return (
         <div>
             <div className="w-full p-6 bg-background text-foreground">

@@ -91,10 +91,6 @@ export function UpdateProductModal({
         }
     }, [form, product])
 
-    useEffect(() => {
-        console.log(form.formState.errors);
-    }, [form.formState.errors]);
-
     const onSubmit = async (data: ProductFormValues) => {
         const productData = {
             ...data,

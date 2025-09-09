@@ -55,7 +55,6 @@ export function LoginForm({
 
             if (response.success) {
                 toast.success(response.message);
-                console.log(location.state)
                 navigate(location.state || "/", { replace: true });
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

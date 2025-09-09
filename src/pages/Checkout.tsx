@@ -48,10 +48,6 @@ export default function Checkout() {
         mode: "onTouched"
     });
 
-    // useEffect(() => {
-    //     console.log(form.formState.errors);
-    // }, [form.formState.errors]);
-
     const SSLCommerzIcon: React.FC<React.ImgHTMLAttributes<HTMLImageElement>> = (props) => (
         <img src={SSLCOMMERZ} alt="SSLCommerz" {...props} />
     );
@@ -66,7 +62,6 @@ export default function Checkout() {
 
         try {
             const response = await createOrder(data).unwrap();
-            console.log(response);
             if(response.success){
                 if(response.data.paymentURL){
                     window.open(response.data.paymentURL, "_blank")
@@ -78,7 +73,6 @@ export default function Checkout() {
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            console.log(error)
             toast.error(error?.data?.message || "Failed to place order");
         }
     };

@@ -106,9 +106,7 @@ export function RegisterForm({
         }
 
         try {
-            const response = await register(userInfo).unwrap();
-            console.log(response);
-
+            await register(userInfo).unwrap();
             toast.success("User created successfully!");
             navigate("/verify", { state: userInfo.email });
 
