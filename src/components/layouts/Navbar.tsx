@@ -89,7 +89,7 @@ const Navbar = ({
         }
     }
     return (
-        <section className="py-4 border-b">
+        <section className="py-4 border-b sticky top-0 bg-white">
             <div className="container mx-auto">
                 {/* Desktop Menu */}
                 <nav className="hidden justify-between lg:flex items-center">
