@@ -42,7 +42,7 @@ export default function PaymentSuccessPage() {
             </div>
 
             {/* Back to Tours */}
-            <Button onClick={() => navigate("/tours")}>Back to Tours</Button>
+            <Button onClick={() => navigate("/shop")}>Back to Shop</Button>
         </div>
     );
 }

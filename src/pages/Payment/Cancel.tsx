@@ -29,7 +29,7 @@ export default function PaymentCancelPage() {
                 <Button variant="outline" onClick={() => navigate("/booking")}>
                     Retry Payment
                 </Button>
-                <Button onClick={() => navigate("/tours")}>Back to Tours</Button>
+                <Button onClick={() => navigate("/shop")}>Back to Shop</Button>
             </div>
         </div>
     );
